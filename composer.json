@@ -1,0 +1,10 @@
+{
+    "name": "simplepush/simplepush-php",
+    "type": "library",
+    "description": "Send push notifications to your smartphone with simplepush.io",
+    "keywords": ["notification","android", "push", "simplepush", "app"],
+    "homepage": "https://simplepush.io",
+    "require": {
+	"php": ">=5.3.0"
+    }
+}
