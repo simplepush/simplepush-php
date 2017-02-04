@@ -1,6 +1,7 @@
 {
     "name": "simplepush/simplepush-php",
     "type": "library",
+    "version": "1.0.1",
     "description": "Send push notifications to your smartphone with simplepush.io",
     "keywords": ["notification","android", "push", "simplepush", "app"],
     "homepage": "https://simplepush.io",
