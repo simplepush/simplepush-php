@@ -2,7 +2,7 @@
 
 class Simplepush {
   const API = 'https://api.simplepush.io/send';
-  const SALT = '1789F0B8C4A051E5';
+  const SALT_COMPAT = '1789F0B8C4A051E5';
   
   public static function send($key, $title, $message, $event = null)
   {
@@ -23,13 +23,18 @@ class Simplepush {
     return file_get_contents(self::API, false, $context);
   }
   
-  public static function send_encrypted($key, $password, $title, $message, $event)
+  public static function send_encrypted($key, $password, $salt, $title, $message, $event)
   {
     if (!isset($key) || !isset($message) || !isset($password)) {
       return FALSE;
     }
+
+    // Compatibility with old clients
+    if (!isset($salt)) {
+      $salt = self::SALT_COMPAT;
+    }
     
-    $payload = self::generate_payload($key, $title, $message, $event, $password);
+    $payload = self::generate_payload($key, $title, $message, $event, $password, $salt);
     
     $options = array(
       'http' => array(
@@ -42,7 +47,7 @@ class Simplepush {
     return file_get_contents(self::API, false, $context);
   }
   
-  private static function generate_payload($key, $title, $message, $event, $password = null)
+  private static function generate_payload($key, $title, $message, $event, $password = null, $salt = null)
   {
     $payload = array('key' => $key);
     
@@ -57,7 +62,7 @@ class Simplepush {
       
       $payload['msg'] = $message;
     } else {
-      $encryption_key = self::generate_encryption_key($password);
+      $encryption_key = self::generate_encryption_key($password, $salt);
       $iv = self::generate_iv();
       $iv_hex = bin2hex($iv);
       
@@ -81,9 +86,9 @@ class Simplepush {
     return random_bytes(16);
   }
   
-  private static function generate_encryption_key($password)
+  private static function generate_encryption_key($password, $salt)
   {
-    $hex_string = substr(sha1($password . self::SALT), 0, 32);
+    $hex_string = substr(sha1($password . $salt), 0, 32);
     return hex2bin($hex_string);
   }
   
